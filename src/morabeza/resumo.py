@@ -55,13 +55,17 @@ def faturacao_mensal(vendas: list[dict]) -> dict[str, int]:
     # EXTENSÃO: igual a faturacao_por_ilha, mas a chave é o mês. O mês são os
     # 7 primeiros caracteres da data: venda["data"][:7] dá "2025-01".
     # No fim devolve o dicionário ordenado: dict(sorted(por_mes.items())).
-    raise NotImplementedError("Extensão por fazer")
+    por_mes = {}
+    for venda in vendas:
+        mes = venda["data"][:7]
+        por_mes[mes] = por_mes.get(mes, 0) + total_venda(venda)
+    return dict(sorted(por_mes.items()))
 
 
 def formatar_cve(valor: int) -> str:
     """Formata um valor em escudos com espaço a separar os milhares: 1530740 -> '1 530 740 CVE'."""
     # EXTENSÃO: f"{valor:,}" dá "1,530,740". Troca as vírgulas por espaços e junta " CVE".
-    raise NotImplementedError("Extensão por fazer")
+    return f"{valor:,}".replace(",", " ") + " CVE"
 
 
 # ---------------------------------------------------------------- Programa principal
@@ -77,11 +81,14 @@ def main(argv: list[str]) -> None:
 
     print(f"Resumo de vendas: {caminho}")
     print(f"Número de vendas: {len(vendas)}")
-    print(f"Faturação total: {faturacao_total(vendas)} CVE")
+    print(f"Faturação total: {formatar_cve(faturacao_total(vendas))}")
     print("Faturação por ilha:")
     for ilha, valor in sorted(por_ilha.items(), key=lambda par: par[1], reverse=True):
-        print(f"  {ilha}: {valor} CVE")
+        print(f"  {ilha}: {formatar_cve(valor)}")
     print(f"Ilha com maior faturação: {ilha_top(por_ilha)}")
+    print("Faturação por mês:")
+    for mes, valor in faturacao_mensal(vendas).items():
+        print(f"  {mes}: {formatar_cve(valor)}")
 
 
 if __name__ == "__main__":
