@@ -117,7 +117,8 @@ def total_por(vendas: Iterable[Venda], chave: Callable[[Venda], str]) -> dict[st
 def top_n(totais: dict[str, int], n: int) -> list[tuple[str, int]]:
     """Os n pares (chave, total) com maior total, do maior para o menor."""
     # EXTENSÃO: sorted(totais.items(), key=lambda par: ..., reverse=True) e depois [:n]
-    raise NotImplementedError("Extensão por fazer")
+    ordenados = sorted(totais.items(), key=lambda par: par[1], reverse=True)
+    return ordenados[:n]
 
 
 @contextmanager
@@ -125,5 +126,10 @@ def cronometro(nome: str):
     """Mede o tempo de um bloco. Uso: with cronometro("leitura"): ..."""
     # EXTENSÃO: guarda time.perf_counter() antes do yield e, num finally,
     #           imprime f"{nome}: {segundos:.3f} s".
-    raise NotImplementedError("Extensão por fazer")
-    yield
+    inicio = time.perf_counter()
+    try:
+        yield
+    finally:
+        segundos = time.perf_counter() - inicio
+        print(f"{nome}: {segundos:.3f} s")
+    
